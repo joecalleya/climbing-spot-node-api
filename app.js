@@ -6,17 +6,17 @@ import { getCollectionDocuments, createCollectionDocument, deleteCollectionDocum
 const app = express();
 app.use(cors());
 app.use(bodyParser.json())
-// GET endpoint which returns/sends all our users in the response
+// GET endpoint which returns/sends all our locations in the response
 app.get('/', async (request, response) => {
-    const users = await getCollectionDocuments('locations')
-    response.send(users);
+    const locations = await getCollectionDocuments('locations')
+    response.send(locations);
 })
-// POST endpoint which takes the user from the request body and saves it...
+// POST endpoint which takes the LOCATION from the request body and saves it...
 app.post('/create', async (request, response) => {
     const newLocations = request.body;
-    console.log("Why is this undefined.....")
+    console.log(request.body,"Why is this undefined.....")
     await createCollectionDocument('locations', newLocations);
-    response.send({message: "We created this user...."})
+    response.send({message: "We created this location...."})
 })
 // DELETE endpoint which deletes the user which is sent in the request body...
 app.delete('/delete', async (request, response) => {
