@@ -14,7 +14,6 @@ app.get('/', async (request, response) => {
 // POST endpoint which takes the LOCATION from the request body and saves it...
 app.post('/create', async (request, response) => {
     const newLocations = request.body;
-    console.log(request.body,"Why is this undefined.....")
     await createCollectionDocument('locations', newLocations);
     response.send({message: "We created this location...."})
 })
