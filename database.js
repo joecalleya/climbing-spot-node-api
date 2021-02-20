@@ -1,17 +1,33 @@
 import pkg from 'pg';
-const { Pool, Client } = pkg
+const {Pool} = pkg
 
-
-const client = new Client({
+const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
   database: 'shares',
   password: 'sherlock1',
   port: 5432
 })
-client.connect()
 
-client.query('SELECT * from watchlist', (err, res) => {
-  console.log(err, res)
-  client.end()
-})
+  export const getTableData = (queryText) => {
+
+    const query = {
+      text: `${queryText}`
+    }
+
+    return new Promise(function(resolve, reject){
+      pool.connect((err, client, done) => {
+        if (err) throw err
+        client.query(queryText, (err, result) => {
+          done()
+          if(err)
+          return reject(err);
+            resolve(result.rows);
+        })
+      })
+    });
+
+  }
+
+
+  

@@ -2,37 +2,51 @@ import cors from 'cors';
 import express from 'express';
 import bodyParser from 'body-parser';
 import {
-    getCollectionDocuments,
-    createCollectionDocument,
-    deleteCollectionDocument
+  getTableData
 } from './database.js';
+import {financialsQuery, newsQuery,timeSeriesQuery} from './queries.js'
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json())
+
 // GET endpoint which returns/sends all our locations in the response
-app.get('/', async (request, response) => {
-    const locations = await getCollectionDocuments('locations')
-    response.send(locations);
+app.get('/:dataset/:condition', async (request, response) => {
+  const dataset = request.params['dataset']
+  const condition = request.params['condition']
+  console.log(dataset,condition)
+
+    if (dataset == 'FINANCIALS')
+    {
+      const result = getTableData(financialsQuery(`${condition}`))
+      .then(function (result) {
+        response.send(result)
+        console.log(result.length,dataset)
+      }).catch(function (err) {
+        console.log(err)
+      });
+    }
+    else if (dataset == 'NEWS')
+    {
+      const result = getTableData(newsQuery, '')
+      .then(function (result) {
+        response.send(result)
+        console.log(result.length,dataset)
+      }).catch(function (err) {
+        console.log(err);
+      })
+    }
+    else if (dataset == 'TIMESERIES')
+    {
+      const result = getTableData(timeSeriesQuery(`${condition}`))
+      .then(function (result) {
+        response.send(result)
+        console.log(result.length,dataset)
+      }).catch(function (err) {
+        console.log(err)
+      });
+    }
 })
 
-// POST endpoint which takes the LOCATION from the request body and saves it...
-app.post('/create', async (request, response) => {
-    const newLocations = request.body;
-    await createCollectionDocument('locations', newLocations);
-    response.send({
-        message: "We created this location...."
-    })
-})
 
-// DELETE endpoint which deletes the user which is sent in the request body...
-app.delete('/delete', async (request, response) => {
-    const locationsToDelete = request.body;
-    console.log(locationsToDelete)
-    await deleteCollectionDocument('locations', locationsToDelete);
-    response.send({
-        message: "We deleted this location...."
-    })
-});
-// Finally! Listen on Port 8080
 app.listen(8080);
