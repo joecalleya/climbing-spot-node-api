@@ -1,19 +1,19 @@
 
-export const timeSeriesQuery = (filterCondition) => {
+export const timeSeriesQuery = (filterCondition,GroupBy) => {
 		
 		const timeSeriesQueryText =
 			`SELECT
-			to_char("Date", 'YYYY-WW') AS weekNumber,
 			"shares"."public"."DETA_PRICE"."Symbol",  
 				avg("shares"."public"."DETA_PRICE"."Price") as Price,  
-				avg("shares"."public"."DETA_PRICE"."UpperBollinger1") as UpperBollinger1, 
-				avg("shares"."public"."DETA_PRICE"."LowerBollinger1") as LowerBollinger1, 
 				avg("shares"."public"."DETA_PRICE"."UpperBollinger30") as UpperBollinger30, 
 				avg("shares"."public"."DETA_PRICE"."LowerBollinger30") as LowerBollinger30, 
 				avg("shares"."public"."DETA_PRICE"."movingaverage30") as movingaverage30, 
-				avg("shares"."public"."DETA_PRICE"."movingaverage1day") as movingaverage1day,
 				avg("shares"."public"."DETA_PRICE"."movingaverage360") as movingaverage360,
 				avg("shares"."public"."DETA_PRICE"."movingaverage5") as movingaverage5
+				`
+				+ ( (GroupBy != 'none') ? `,${GroupBy}` : '')
+				+
+				` 
 			FROM 
 				"shares"."public"."DETA_PRICE"
 			inner Join 	
@@ -35,10 +35,13 @@ export const timeSeriesQuery = (filterCondition) => {
 				"shares"."public"."DETA_PRICE"."Date">(CURRENT_TIMESTAMP - INTERVAL '12 months')
 				
 			GROUP BY
-				weekNumber
-				,"shares"."public"."DETA_PRICE"."Symbol"
-			order by
-				weekNumber`
+				"shares"."public"."DETA_PRICE"."Symbol"
+				`
+				
+				+ ( (GroupBy != 'none') ? `,${GroupBy}` : '')
+				+
+						
+			``
 
 				
 	return timeSeriesQueryText
@@ -68,7 +71,7 @@ export const financialsSummaryQuery = (filterCondition, GroupBy) => {
 	sum("shares"."public"."DETA_FINANCIALS"."Profit") as "Profit",
 	avg("shares"."public"."DETA_FINANCIALS"."pct_return") as "pct_return"
 	`
-	+ ( (GroupBy != 'none') ? `${GroupBy},` : '')
+	+ ( (GroupBy != 'none') ? `,${GroupBy}` : '')
 	+
 	` 
 	FROM 
