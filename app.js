@@ -17,7 +17,6 @@ app.get('/:dataset/:condition/:groupBy/', async (request, response) => {
   console.log(dataset,condition)  
   const groupBy = request.params['groupBy']
 
-
     if (dataset == 'FINANCIALSDETAIL')
     {
       getTableData(financialsDetailQuery(`${condition}`))
@@ -30,7 +29,6 @@ app.get('/:dataset/:condition/:groupBy/', async (request, response) => {
     }
     else if (dataset == 'FINANCIALSSUM')
     {
-      //console.log(financialsSummaryQuery(`${condition}`,`${groupBy}`))
       getTableData(financialsSummaryQuery(`${condition}`,`${groupBy}`))
       .then(function (result) {
         console.log("rows: ",result.length)
@@ -51,7 +49,9 @@ app.get('/:dataset/:condition/:groupBy/', async (request, response) => {
     }
     else if (dataset == 'TIMESERIES')
     {
-      getTableData(timeSeriesQuery(`${condition}`))
+      //console.log(timeSeriesQuery(`${condition}`,`${groupBy}`))
+
+      getTableData(timeSeriesQuery(`${condition}`,`${groupBy}`))
       .then(function (result) {
         console.log("rows: ",result.length)
         response.send(result)
